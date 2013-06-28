@@ -1,0 +1,62 @@
+#!/usr/bin/env phantomjs
+
+var page = require('webpage').create(),
+    system = require('system');
+
+var login_url = 'https://turbofilm.tv/Signin';
+var url = system.args[3];
+
+var username = system.args[1];
+var password = system.args[2];
+var video_language = 'en';
+
+/*
+page.onConsoleMessage = function(msg) {
+  console.log(msg);
+};
+*/
+
+page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, function () {
+    page.open(url, function() {
+        var basename = page.evaluate(function() {
+            var match = /Эпизод: (\d+), Сезон: (\d+)/.exec($('.se').text());
+            var serial_name = $('.titlebox .mains .en').text().toLowerCase();
+            return serial_name + '-s' + match[2] + 'e' + match[1];
+        });
+
+        var command_to_convert = "HandBrakeCLI -i '" + basename + ".mp4'";
+        var subtitles = "";
+
+
+        var video_url = page.evaluate(function(video_language) {
+            updateSource(metadata.sources['default'], 0, video_language);
+            return $('#vd').attr('src');
+        }, video_language);
+        console.log("curl -L -o '" + basename + ".mp4' 'https:" + video_url + "'");
+
+        var eng_subtitles = page.evaluate(function() {
+            return metadata.subtitles.sources.en;
+        });
+        if (eng_subtitles) {
+            console.log("curl -o '" + basename + "-eng.xml' 'https:" + eng_subtitles + "'");
+            command_to_convert += " --srt-file='" + basename + "-eng.srt'";
+            subtitles = "eng";
+        }
+        var rus_subtitles = page.evaluate(function() {
+            return metadata.subtitles.sources.ru;
+        });
+        if (rus_subtitles) {
+            console.log("curl -o '" + basename + "-rus.xml' 'https:" + rus_subtitles + "'");
+            command_to_convert += " --srt-file='" + basename + "-rus.srt'";
+            if (subtitles !== "") {
+                subtitles += ",";
+            }
+            subtitles += "rus";
+        }
+        command_to_convert += " --srt-codeset=utf-8 --srt-lang=" + subtitles + " -o '" + basename + "-ipad.mp4'";
+        console.log('./convert.py *.xml');
+        console.log('rm -f *.xml');
+        console.log(command_to_convert);
+        phantom.exit();
+    });
+});
