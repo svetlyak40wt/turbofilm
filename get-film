@@ -23,6 +23,7 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             var serial_name = $('.titlebox .mains .en').text().toLowerCase();
             return serial_name + '-s' + match[2] + 'e' + match[1];
         });
+        basename = basename.replace(' ', '-');
 
         var command_to_convert = "HandBrakeCLI -i '" + basename + ".mp4'";
         var subtitles = "";
