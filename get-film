@@ -23,7 +23,10 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             var serial_name = $('.titlebox .mains .en').text().toLowerCase();
             return serial_name + '-s' + match[2] + 'e' + match[1];
         });
-        basename = basename.replace(' ', '-');
+        basename = 'cache/' + basename.replace(' ', '-');
+
+        console.log('mkdir -p cache');
+        console.log('mkdir -p ipad');
 
         var command_to_convert = "HandBrakeCLI -i '" + basename + ".mp4'";
         var subtitles = "";
@@ -54,9 +57,9 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             }
             subtitles += "rus";
         }
-        command_to_convert += " --srt-codeset=utf-8 --srt-lang=" + subtitles + " -o '" + basename + "-ipad.mp4'";
-        console.log('./convert.py *.xml');
-        console.log('rm -f *.xml');
+        command_to_convert += " --srt-codeset=utf-8 --srt-lang=" + subtitles + " -o 'ipad/" + basename + "-ipad.mp4'";
+        console.log('./convert.py cache/*.xml');
+        console.log('rm -f cache/*.xml');
         console.log(command_to_convert);
         phantom.exit();
     });
