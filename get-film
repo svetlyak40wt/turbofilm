@@ -32,13 +32,13 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             updateSource(metadata.sources['default'], 0, video_language);
             return $('#vd').attr('src');
         }, video_language);
-        console.log("curl -L -o '" + basename + ".mp4' 'https:" + video_url + "'");
+        console.log("test -e '" + basename + ".mp4' || curl -L -o '" + basename + ".mp4' 'https:" + video_url + "'");
 
         var eng_subtitles = page.evaluate(function() {
             return metadata.subtitles.sources.en;
         });
         if (eng_subtitles) {
-            console.log("curl -o '" + basename + "-eng.xml' 'https:" + eng_subtitles + "'");
+            console.log("test -e '" + basename + "-eng.xml' || curl -o '" + basename + "-eng.xml' 'https:" + eng_subtitles + "'");
             command_to_convert += " --srt-file='" + basename + "-eng.srt'";
             subtitles = "eng";
         }
@@ -46,7 +46,7 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             return metadata.subtitles.sources.ru;
         });
         if (rus_subtitles) {
-            console.log("curl -o '" + basename + "-rus.xml' 'https:" + rus_subtitles + "'");
+            console.log("test -e '" + basename + "-rus.xml' || curl -o '" + basename + "-rus.xml' 'https:" + rus_subtitles + "'");
             command_to_convert += " --srt-file='" + basename + "-rus.srt'";
             if (subtitles !== "") {
                 subtitles += ",";
