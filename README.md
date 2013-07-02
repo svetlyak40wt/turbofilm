@@ -30,7 +30,7 @@
   используя homebrew, второй просто из пакета для OSX.
 * Всё, после этого запусти в командной строке что-то вроде:
 
-    ./get-my-films https://turbofilm.tv/Watch/Futurama/Season7/Episode15 https://turbofilm.tv/Watch/Futurama/Season7/Episode16
+      ./get-my-films https://turbofilm.tv/Watch/Futurama/Season7/Episode15 https://turbofilm.tv/Watch/Futurama/Season7/Episode16
 
   Если всё пройдет хорошо, результаты окажутся в поддиректории `ipad`.
   
