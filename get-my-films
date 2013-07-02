@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR="$(dirname $0)"
+
+# читаем имя и пароль из отдельного файла,
+# который не в git
+if [ -e "$BASEDIR/settings" ]; then
+    source "$BASEDIR/settings"
+else
+    echi "Please, create file $BASEDIR/settings with USERNAME and PASSWORD"
+    exit 1
+fi
+    
+while test -n "$1"; do
+    $BASEDIR/get-film $USERNAME $PASSWORD $1 | bash -xe
+    shift
+done
