@@ -23,12 +23,14 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
             var serial_name = $('.titlebox .mains .en').text().toLowerCase();
             return serial_name + '-s' + match[2] + 'e' + match[1];
         });
-        basename = 'cache/' + basename.replace(' ', '-');
+        basename = basename.replace(' ', '-');
+        var basename_with_dir = 'cache/' + basename;
 
+        console.log("test -e 'ipad/" + basename + ".mp4' && exit 0");
         console.log('mkdir -p cache');
         console.log('mkdir -p ipad');
 
-        var command_to_convert = "HandBrakeCLI -i '" + basename + ".mp4'";
+        var command_to_convert = "HandBrakeCLI -i '" + basename_with_dir + ".mp4'";
         var subtitles = "";
 
 
@@ -38,28 +40,28 @@ page.open(login_url, 'post', 'login=' + username + '&passwd=' + password, functi
         }, video_language);
         // иногда cdn турбофильма почему-то отдает 404.
         // в таких случаях просто удаляем файл и возвращаем ошибку
-        console.log("test -e '" + basename + ".mp4' || curl -f -L -o '" + basename + ".mp4' 'https:" + video_url + "'");
+        console.log("test -e '" + basename_with_dir + ".mp4' || curl -f -L -o '" + basename_with_dir + ".mp4' 'https:" + video_url + "'");
 
         var eng_subtitles = page.evaluate(function() {
             return metadata.subtitles.sources.en;
         });
         if (eng_subtitles) {
-            console.log("test -e '" + basename + "-eng.xml' || curl -f -o '" + basename + "-eng.xml' 'https:" + eng_subtitles + "'");
-            command_to_convert += " --srt-file='" + basename + "-eng.srt'";
+            console.log("test -e '" + basename_with_dir + "-eng.xml' || curl -f -o '" + basename_with_dir + "-eng.xml' 'https:" + eng_subtitles + "'");
+            command_to_convert += " --srt-file='" + basename_with_dir + "-eng.srt'";
             subtitles = "eng";
         }
         var rus_subtitles = page.evaluate(function() {
             return metadata.subtitles.sources.ru;
         });
         if (rus_subtitles) {
-            console.log("test -e '" + basename + "-rus.xml' || curl -f -o '" + basename + "-rus.xml' 'https:" + rus_subtitles + "'");
-            command_to_convert += " --srt-file='" + basename + "-rus.srt'";
+            console.log("test -e '" + basename_with_dir + "-rus.xml' || curl -f -o '" + basename_with_dir + "-rus.xml' 'https:" + rus_subtitles + "'");
+            command_to_convert += " --srt-file='" + basename_with_dir + "-rus.srt'";
             if (subtitles !== "") {
                 subtitles += ",";
             }
             subtitles += "rus";
         }
-        command_to_convert += " --srt-codeset=utf-8 --srt-lang=" + subtitles + " -o 'ipad/" + basename + "-ipad.mp4'";
+        command_to_convert += " --srt-codeset=utf-8 --srt-lang=" + subtitles + " -o 'ipad/" + basename + ".mp4'";
         console.log('./convert.py cache/*.xml');
         console.log('rm -f cache/*.xml');
         console.log(command_to_convert);
