@@ -9,7 +9,7 @@ BASEDIR="$(dirname $0)"
 if [ -e "$BASEDIR/settings" ]; then
     source "$BASEDIR/settings"
 else
-    echi "Please, create file $BASEDIR/settings with USERNAME and PASSWORD"
+    echo "Please, create file $BASEDIR/settings with USERNAME and PASSWORD"
     exit 1
 fi
     
